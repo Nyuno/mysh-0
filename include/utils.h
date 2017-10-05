@@ -1,8 +1,9 @@
 #ifndef MYSH_UTILS_H_
 #define MYSH_UTILS_H_
 
-char** stirng_split(char* str,
-                    const char delimiter);
+char** split_string_with_counting(char* str,
+                    const char delimiter,
+                    int* count);
 
 void mysh_parse_command(const char* command,
                         int *argc, char*** argv);
