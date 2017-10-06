@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "commands.h"
 #include "utils.h"
+
+extern char g_current_directory[1024];
 
 static void release_argv(int argc, char** argv);
 
@@ -13,18 +16,11 @@ int main()
   int argc;
   char** argv;
 
+  getcwd(g_current_directory, sizeof(g_current_directory));
+
   while (1) {
     fgets(buf, 8096, stdin);
-    // 개행 문자 제거
-    buf[strlen(buf) - 1] = '\0';
-
     mysh_parse_command(buf, &argc, &argv);
-
-    printf("---------\n");
-    printf("argc : %d\n", argc);
-    printf("argv[0] : %s\n", argv[0]);
-    printf("argv[1] : %s\n", argv[1]);
-    printf("---------\n");
 
     if (strcmp(buf, "") == 0) {
       goto release_and_continue;

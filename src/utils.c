@@ -25,6 +25,7 @@ char** split_string_with_counting(char* str,
     char* tmp             = str;
     char* last_delimiter  = 0;
     int isBlank           = 0;
+    int prev_is_not_blank = 0;
     char delim[2];
     delim[0] = delimiter;
     delim[1] = 0;
@@ -38,13 +39,16 @@ char** split_string_with_counting(char* str,
       if (delimiter == *tmp) {
         last_delimiter = tmp;
         isBlank = 1;
-      }  else {
-        if (isBlank) {
+      } else {
+        if (isBlank && prev_is_not_blank) {
           ++(*count);
         }
         isBlank = 0;
       }
-      ++tmp;
+
+      if (*tmp++ != ' ') {
+        ++prev_is_not_blank;
+      }
     }
 
     (*count) += 2;
@@ -63,10 +67,14 @@ char** split_string_with_counting(char* str,
         *(result + idx++) = strdup(token);
         token = strtok(NULL, delim);
       }
-      printf("마지막 문자열 %s", *(result + idx - 1));
-      // 문자열 배열의 끝에 0 입력
+
       *(result + idx) = 0;
     }
+
+    if (!result[0]) {
+      result[0] = strdup("");
+    }
+
 
     return result;
 }
@@ -74,10 +82,29 @@ char** split_string_with_counting(char* str,
 void mysh_parse_command(const char* command,
                         int *argc, char*** argv)
 {
-  char* tmp = strdup(command);
-  printf("command: %s", tmp);
+  char* formatted_string  = strdup(command);
+  char* tmp               = formatted_string;
 
-  *argv = split_string_with_counting(tmp, ' ', argc);
+  /*
+   * 문자열 전처리
+   *
+   *  - 맨 끝 개행 문자 제거
+   *  - 탭 문자 제거
+   *  - 개행 문자 제거
+   *
+   */
+  if (formatted_string[strlen(formatted_string) - 1] == '\n') {
+    formatted_string[strlen(formatted_string) - 1] = '\0';
+  }
+  while (*tmp) {
+    if (*tmp == '\n' || *tmp == '\t') {
+      *tmp = ' ';
+    }
 
-  free(tmp);
+    ++tmp;
+  }
+
+  *argv = split_string_with_counting(formatted_string, ' ', argc);
+
+  free(formatted_string);
 }
