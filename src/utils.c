@@ -23,7 +23,6 @@ char** split_string_with_counting(char* str,
     char** result         = 0;
     *count                = 0;
     char* tmp             = str;
-    char* last_delimiter  = 0;
     int isBlank           = 0;
     int prev_is_not_blank = 0;
     char delim[2];
@@ -37,7 +36,6 @@ char** split_string_with_counting(char* str,
      */
     while (*tmp) {
       if (delimiter == *tmp) {
-        last_delimiter = tmp;
         isBlank = 1;
       } else {
         if (isBlank && prev_is_not_blank) {
