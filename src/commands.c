@@ -5,7 +5,7 @@
 #include "commands.h"
 
 // 전역 변수 참조
-char g_current_directory[1024] = "";
+static char g_current_directory[1024] = "";
 
 int do_cd(int argc, char** argv) {
   if (!validate_cd_argv(argc, argv)) {
